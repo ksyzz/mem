@@ -123,11 +123,11 @@ class Login extends React.Component {
                                             <button onClick={this.toLogin} className="btn-block btn btn-primary pull-right pl20 pr20" tabindex="3" >登录
                                             </button>
                                         </div>
-                                        <div className="form-group clearfix">
-                                            <a className="btn-block btn btn-default pull-right pl20 pr20 SFLogin" >
-                                                注册新账号
-                                            </a>
-                                        </div>
+                                        {/*<div className="form-group clearfix">*/}
+                                            {/*<a className="btn-block btn btn-default pull-right pl20 pr20 SFLogin" >*/}
+                                                {/*注册新账号*/}
+                                            {/*</a>*/}
+                                        {/*</div>*/}
                                     </div>
                                 </div>
                             </div>
