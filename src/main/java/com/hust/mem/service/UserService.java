@@ -1,11 +1,9 @@
 package com.hust.mem.service;
 
-import com.hust.mem.dao.UserRepository;
 import com.hust.mem.enums.UserType;
 import com.hust.mem.model.entity.User;
 import com.hust.mem.model.json.UserInfo;
 import com.hust.mem.util.PasswordHashUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -17,8 +15,8 @@ import java.security.spec.InvalidKeySpecException;
  */
 @Service
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
+//    @Autowired
+//    UserRepository userRepository;
 
     /**
      * 创建一个学生帐号
@@ -30,7 +28,7 @@ public class UserService {
         user.setId(userInfo.getId());
         user.setName(userInfo.getName());
         user.setPassword(PasswordHashUtil.createHash(userInfo.getPassword()));
-        userRepository.save(user);
+//        userRepository.save(user);
     }
     /**
      * 创建一个教师帐号
@@ -42,6 +40,6 @@ public class UserService {
         user.setId(userInfo.getId());
         user.setName(userInfo.getName());
         user.setPassword(PasswordHashUtil.createHash(userInfo.getPassword()));
-        userRepository.save(user);
+//        userRepository.save(user);
     }
 }
