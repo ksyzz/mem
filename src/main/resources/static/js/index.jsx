@@ -146,18 +146,14 @@ class Login extends React.Component {
 class Main extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            type : sessionStorage.getItem("type")
-        }
     }
 
     render(){
-        let type = this.state.type;
         return (
             <div>
                 <Navigation />
                 <Switch>
-                    <Route exact path="/" component={type == 'TEACHER' ? Teacher : Student}/>
+                    <Route exact path="/" component={Center}/>
                     <Route exact path="/project/view/:id" component={ProjectInfo}/>
                     <Route exact path="/project/create" component={Create}/>
                 </Switch>
@@ -179,7 +175,7 @@ class Navigation extends React.Component {
     }
 }
 
-class Teacher extends React.Component {
+class Center extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -240,8 +236,10 @@ class Teacher extends React.Component {
                 )}
             </tbody>
         )
+        let type = sessionStorage.getItem("type");
         return (
             <div>
+                {type == 'TEACHER' && <div className="createProject"><Link to='/project/create'>创建项目</Link></div>}
                     <table className="table table-striped" contenteditable="true">
                         <thead>
                         <tr>
@@ -255,13 +253,10 @@ class Teacher extends React.Component {
                         {dom}
 
                     </table>
+
             </div>
         )
     }
-}
-
-class Student extends React.Component {
-
 }
 
 class ProjectInfo extends React.Component {

@@ -2,3 +2,17 @@
     float: right;
     margin-right: 40px;
 }
+.createProject{
+    margin: 6px;
+    float: right;
+    width: 100px;
+    font-size: 16px;
+}
+.createProject a{
+    color: white;
+    background-color: #61b961;
+    padding: 3px;
+    border-radius: 2px;
+    text-decoration:none;
+
+}
