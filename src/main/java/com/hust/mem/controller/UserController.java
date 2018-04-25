@@ -39,7 +39,7 @@ public class UserController {
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
      */
-    @RequestMapping(value="/register/student", method= RequestMethod.POST)
+    @RequestMapping(value="/register/teacher", method= RequestMethod.POST)
     public void createTeacher(
         @RequestBody UserInfo userInfo
     ) throws InvalidKeySpecException, NoSuchAlgorithmException {
