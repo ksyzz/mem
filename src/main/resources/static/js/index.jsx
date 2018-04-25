@@ -238,7 +238,7 @@ class Center extends React.Component {
         )
         let type = sessionStorage.getItem("type");
         return (
-            <div>
+            <div className="plist">
                 {type == 'TEACHER' && <div className="createProject"><Link to='/project/create'>创建项目</Link></div>}
                     <table className="table table-striped" contenteditable="true">
                         <thead>
@@ -260,10 +260,18 @@ class Center extends React.Component {
 }
 
 class ProjectInfo extends React.Component {
-
+    render(){
+        return (
+            <div>查看项目<div className="createProject"><Link to='/'>返回</Link></div></div>
+        )
+    }
 }
 
 class Create extends React.Component {
-
+    render(){
+        return (
+            <div>创建项目<div className="createProject"><Link to='/'>返回</Link></div></div>
+        )
+    }
 }
 ReactDOM.render(<HashRouter><Body/></HashRouter>,  document.getElementById("container"));
