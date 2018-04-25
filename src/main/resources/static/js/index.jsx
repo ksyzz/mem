@@ -8,8 +8,8 @@ class Body extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId : sessionStorage.getItem("userId"),
-            userName : sessionStorage.getItem("userName")
+            userId : sessionStorage.getItem("userId")
+
         };
         this.refresh = this.refresh.bind(this);
     }
@@ -17,7 +17,6 @@ class Body extends React.Component {
     refresh(){
         this.setState({
             userId : sessionStorage.getItem("userId"),
-            userName : sessionStorage.getItem("userName")
         })
     }
 
@@ -27,7 +26,7 @@ class Body extends React.Component {
         return (
             <div>
 
-                {userId == null && <Login refresh={this.refresh}/>}
+                {userId == null ? <Login refresh={this.refresh}/> : <Main />}
             </div>
         )
     }
@@ -52,9 +51,7 @@ class Login extends React.Component {
         const password = this.refs.password.value;
         const url = '/login?userId='+userId+'&password='+password;
         let that = this;
-        that.setState({
-            error:false,
-        });
+
         fetch(url, {
             method:'GET',
             headers: {
@@ -65,25 +62,27 @@ class Login extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    result = {
-                        userName : '教师',
-                        userId : '123456',
-                        type : 'teacher'
+                    if (result.state != 200) {
+                        result = {
+                            userName: '教师',
+                            userId: '123456',
+                            type: 'TEACHER'
+                        }
+                        sessionStorage.setItem("userName", result.userName);
+                        sessionStorage.setItem("userId", result.id);
+                        sessionStorage.setItem("type", result.type);
+                        that.setState({
+                            error:false,
+                        });
+                        that.props.refresh();
+                    } else {
+                        that.setState({
+                            error:true,
+                        });
                     }
-                    sessionStorage.setItem("userName", result.userName);
-                    sessionStorage.setItem("userId", result.id);
-                    sessionStorage.setItem("type", result.type);
-
-                    that.props.refresh();
-                    $(".modal-backdrop").hide();
 
                 },
-                (error) => {
-                    window.alert("用户名或密码错误！");
-                    that.setState({
-                        error:true
-                    })
-                }
+
             )
             .catch(function () {
                 that.setState({
@@ -92,6 +91,10 @@ class Login extends React.Component {
             })
     }
     render(){
+        let error = this.state.error;
+        let estyle = {
+            color : 'red'
+        }
         return (
             <div className="modal-dialog">
                 <div className="modal-content">
@@ -111,23 +114,23 @@ class Login extends React.Component {
                                         </div>
                                         <div className="form-group">
                                             <label className="control-label">帐号</label>
-                                            <input type="number" className="form-control" ref="userId"  name="username" tabindex="1" required="" placeholder="帐号" autocomplete="off"/>
+                                            <input type="text" className="form-control" ref="userId"  name="username" tabindex="1" required="" placeholder="帐号" autocomplete="off"/>
                                         </div>
                                         <div className="form-group">
                                             <label className="control-label">密码</label><span className="pull-right"><a href="#" tabindex="4">忘记密码</a></span>
                                             <input type="password" className="form-control" ref="password" name="password" tabindex="2" required="" placeholder="请输入密码"/>
                                         </div>
-                                        {this.state.error && <p style="color:#F00">用户名或密码错误</p>}
+                                        {error && <p style={estyle}>用户名或密码错误</p>}
                                         <br/>
                                         <div className="form-group clearfix">
                                             <button onClick={this.toLogin} className="btn-block btn btn-primary pull-right pl20 pr20" tabindex="3" >登录
                                             </button>
                                         </div>
-                                        {/*<div className="form-group clearfix">*/}
-                                            {/*<a className="btn-block btn btn-default pull-right pl20 pr20 SFLogin" >*/}
-                                                {/*注册新账号*/}
-                                            {/*</a>*/}
-                                        {/*</div>*/}
+                                        <div className="form-group clearfix">
+                                            <a disabled={true} className="btn-block btn btn-default pull-right pl20 pr20 SFLogin" >
+                                                注册新账号
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -140,4 +143,132 @@ class Login extends React.Component {
 
 }
 
+class Main extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            type : sessionStorage.getItem("type")
+        }
+    }
+
+    render(){
+        let type = this.state.type;
+        return (
+            <div>
+                <Navigation />
+                <Switch>
+                    <Route exact path="/" component={type == 'TEACHER' ? Teacher : Student}/>
+                    <Route exact path="/project/view/:id" component={ProjectInfo}/>
+                    <Route exact path="/project/create" component={Create}/>
+                </Switch>
+            </div>
+        )
+    }
+}
+
+class Navigation extends React.Component {
+    render(){
+        return (
+            <div className="weplay-header">
+                <div className="userInfo">
+                    {sessionStorage.getItem("userName")}，您好
+
+                </div>
+            </div>
+        )
+    }
+}
+
+class Teacher extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            projects : []
+        }
+        this.getData = this.getData.bind(this);
+    }
+
+    getData(){
+        let url = '';
+        let that = this;
+        fetch(url, {
+            method:'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if (result.state == 200) {
+
+                        that.setState({
+                            projects:result,
+                        });
+                    }
+                },
+
+            )
+            .catch(function () {
+                that.setState({
+                    error:true
+                })
+            })
+    }
+
+    render(){
+        let projects = [];
+        for (let i = 0 ; i < 5; i++) {
+            projects.push({
+                id:""+i+"",
+                name:"项目"+i,
+                creator: "教师",
+                created: '2018/04/23'
+            })
+        }
+        let dom = [];
+        dom.push(
+            <tbody>
+                {projects.map((item) =>
+                    <tr>
+                        <td>{item.id}</td>
+                        <td><Link to={`/project/view/${item.id}`}>{item.name}</Link></td>
+                        <td>{item.creator}</td>
+                        <td>{item.created}</td>
+                    </tr>
+                )}
+            </tbody>
+        )
+        return (
+            <div>
+                    <table className="table table-striped" contenteditable="true">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>名称</th>
+                            <th>创建人</th>
+                            <th>创建时间</th>
+                        </tr>
+
+                        </thead>
+                        {dom}
+
+                    </table>
+            </div>
+        )
+    }
+}
+
+class Student extends React.Component {
+
+}
+
+class ProjectInfo extends React.Component {
+
+}
+
+class Create extends React.Component {
+
+}
 ReactDOM.render(<HashRouter><Body/></HashRouter>,  document.getElementById("container"));

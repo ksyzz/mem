@@ -103,3 +103,9 @@
 .footer-bottom p {
     font-size: 0.875em;
 }
+.weplay-header {
+    height: 50px;
+    line-height: 55px;
+    background: #0000009c;
+    color: #FFF
+}
