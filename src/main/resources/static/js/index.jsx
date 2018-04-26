@@ -168,7 +168,8 @@ class Navigation extends React.Component {
             <div className="weplay-header">
                 <div className="userInfo">
                     {sessionStorage.getItem("userName")}，您好
-
+                    {/*<a id="modal-21646" role="button" className="btn-register"*/}
+                        {/*data-toggle="modal" onClick={this.quit}>退出</a>*/}
                 </div>
             </div>
         )
@@ -239,7 +240,7 @@ class Center extends React.Component {
         let type = sessionStorage.getItem("type");
         return (
             <div className="plist">
-                {type == 'TEACHER' && <div className="createProject"><Link to='/project/create'>创建项目</Link></div>}
+                {type == 'TEACHER' && <div className="return"><Link to='/project/create'>创建项目</Link></div>}
                     <table className="table table-striped" contenteditable="true">
                         <thead>
                         <tr>
@@ -262,16 +263,154 @@ class Center extends React.Component {
 class ProjectInfo extends React.Component {
     render(){
         return (
-            <div>查看项目<div className="createProject"><Link to='/'>返回</Link></div></div>
+            <div>查看项目<div className="return"><Link to='/'>返回</Link></div></div>
         )
     }
 }
 
 class Create extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            rows: 15,
+            steps:{},
+            currentRow: 1,
+            index:1
+        }
+        this.addOneRow = this.addOneRow.bind(this);
+        this.focusRow = this.focusRow.bind(this);
+        this.addDraw = this.addDraw.bind(this);
+        // this.addOneIndex = this.addOneIndex.bind(this);
+    }
+
+    addOneRow(){
+        this.setState({
+            rows : this.state.rows + 1
+        })
+    }
+
+    // addOneIndex(){
+    //     this.setState({
+    //         index : this.state.index + 1
+    //     })
+    // }
+
+    focusRow(e){
+        this.setState({
+            currentRow : e
+        })
+    }
+
+    addDraw(e){
+        this.setState({
+            steps : e,
+            index : this.state.index + 1
+        })
+    }
+
     render(){
+        let codes = [];
+        let rows = this.state.rows;
+        for (let i = 1; i <= rows; i++) {
+            codes.push(
+                <tr>
+                    <td className="index">{i}</td>
+                    <td className="code">
+                        <input type='text' onclick={()=>this.focusRow(i)} className='line'/>
+                    </td>
+                </tr>
+            )
+        }
         return (
-            <div>创建项目<div className="createProject"><Link to='/'>返回</Link></div></div>
+            <div className="cmain">
+                <div className="return"><Link to='/'>返回</Link></div>
+                <div className="createProject">
+                    <table className="ctable" contenteditable="true">
+                        <tbody>
+                            {codes}
+                        </tbody>
+                    </table>
+                    <div className='addrow'><a onClick={this.addOneRow}>添加一行</a></div>
+                </div>
+                <Draw data={this.state} addDraw={this.addDraw} />
+            </div>
+        )
+    }
+}
+
+class Draw extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            draw:{
+                step:props.data.index,
+                content:'添加流程图'
+            }
+        }
+        this.saveDraw = this.saveDraw.bind(this);
+        this.setDraw = this.setDraw.bind(this);
+    }
+
+    setDraw(e){
+        this.setState({
+            draw:e
+        })
+    }
+
+    saveDraw(){
+        let content = this.refs.content.innerHTML;
+        let row = this.props.data.currentRow;
+        let draws = this.props.data.steps[row];
+        if (draws == null) {
+            draws = [];
+        }
+        draws.push({
+            step:this.props.data.index,
+            content: content
+        })
+        this.props.data.steps[row] = draws;
+        this.props.addDraw(this.props.data.steps)
+    }
+
+    render(){
+        let row = this.props.data.currentRow;
+        let draws = this.props.data.steps[row];
+        if (draws == null) {
+            draws = [];
+        }
+        draws.push({
+            step:this.props.data.index,
+            content: '添加流程图'
+        })
+        let tags = [];
+        let style = {
+            backgroundColor:"#61b961",
+            color:"#FFF"
+        };
+        for (let i = 0; i < draws.length; i++) {
+            let step = draws[i].step;
+            if (step == this.props.data.index){
+                tags.push(<button disabled={true} onClick={()=>this.setDraw(draws[i])} style={style}>步骤{step}</button>)
+            } else {
+                tags.push(<button onClick={()=>this.setDraw(draws[i])}>步骤{step}</button>)
+            }
+
+        }
+
+        return (
+            <div className="draw">
+                <div className="tags">
+                        {tags}
+                        <button onClick={this.saveDraw}>保存</button>
+                </div>
+                <div className="contents" ref="content">
+                  {this.state.draw.content}
+                </div>
+            </div>
         )
     }
 }
 ReactDOM.render(<HashRouter><Body/></HashRouter>,  document.getElementById("container"));
+
+
+

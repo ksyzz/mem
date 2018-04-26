@@ -2,16 +2,19 @@
     float: right;
     margin-right: 40px;
 }
-.createProject{
-    margin: 6px;
+.return{
+    margin-top: 6px;
     float: right;
-    width: 100px;
+    width: 100%;
     font-size: 16px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #d6d6d6;
 }
-.createProject a{
+.return a{
     color: white;
     background-color: #61b961;
     padding: 3px;
+    margin-left: 90%;
     border-radius: 2px;
     text-decoration:none;
 
@@ -20,4 +23,73 @@
 .plist{
     margin-left: 30px;
     margin-right: 30px;
+}
+
+.createProject{
+    border-right: 1px solid grey;
+    min-height: 600px;
+    float: left;
+    width: 50%;
+}
+
+.draw{
+    padding-top: 4px;
+    min-height: 600px;
+    float: right;
+    width: 50%;
+}
+
+.chr {
+    color: grey;
+}
+
+.ctable {
+    width: 100%;
+}
+
+/*.ctable td{*/
+    /*border-bottom: #ddd 1px solid;*/
+    /*line-height: 2.45;*/
+/*}*/
+
+
+.index {
+    width: 5%;
+    /*border-bottom: #ddd 1px solid;*/
+    line-height: 2.45;
+    text-align: center;
+}
+.code {
+    width: 95%;
+    border-bottom: #ddd 1px solid;
+    line-height: 2.65;
+}
+.line {
+    border: none;
+    background-color: inherit;
+    width: 100%;
+    height: inherit;
+    vertical-align: bottom;
+    outline: none;
+    font-family: sans-serif;
+}
+.cmain {
+    margin-bottom: 40px;
+}
+.addrow{
+    float: right;
+    margin: 6px;
+}
+.tags {
+    border-bottom: 1px solid grey;
+    padding-left: 10px;
+}
+.tags button{
+    background-color: #fff;
+    padding: 3px;
+    border-radius: 2px;
+    text-decoration:none;
+    border: none;
+    margin: 3px;
+
 }
