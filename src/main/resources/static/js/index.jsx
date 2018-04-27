@@ -262,8 +262,105 @@ class Center extends React.Component {
 
 class ProjectInfo extends React.Component {
     render(){
+        let codes = [];
+        codes.push('int function(int n)');
+        codes.push('{');
+        codes.push('    if (n == 1)');
+        codes.push('        return 1;');
+        codes.push('    else');
+        codes.push('        return 0;');
+        codes.push('}');
+        let steps = [];
+        steps.push({
+            index:1,
+            row:1,
+            content:'步骤1'
+        });
+        steps.push({
+            index:2,
+            row:3,
+            content:'步骤2'
+        });
+        steps.push({
+            index:3,
+            row:5,
+            content:'步骤3'
+        });
+        steps.push({
+            index:4,
+            row:6,
+            content:'步骤4'
+        });
+
         return (
-            <div>查看项目<div className="return"><Link to='/'>返回</Link></div></div>
+            <div className="cmain">
+                <div className="return"><Link to='/'>返回</Link></div>
+                <Show codes={codes} steps={steps}/>
+            </div>
+        )
+    }
+}
+
+class Show extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            index : 1
+        }
+        this.prev = this.prev.bind(this);
+        this.next = this.next.bind(this);
+    }
+    prev(){
+        this.setState({
+            index:this.state.index-1
+        })
+    }
+    next(){
+        this.setState({
+            index:this.state.index+1
+        })
+    }
+
+    render(){
+        let codes = this.props.codes;
+        let index = this.state.index;
+        let steps = this.props.steps;
+        let style = {
+            backgroundColor:"#ffffc3"
+        }
+        let left = [];
+        for (let i = 1; i <= codes.length; i++) {
+            left.push(
+                <tr>
+                    <td className="index">{i}</td>
+                    {steps[index-1].row == i ? <td className="code" style={style}>
+                        {codes[i - 1]}
+                     </td> : <td className="code">
+                        {codes[i - 1]}
+                    </td>
+                    }
+                </tr>
+            )
+        }
+        return(
+            <div>
+                <div className="createProject">
+                    <table className="ctable" contenteditable="true">
+                        <tbody>
+                        {left}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="draw">
+                    <div className="contents" >
+                        {this.props.steps[index-1].content}
+                    </div>
+                </div>
+                <div >
+                    <div className="bl"><button  onClick={this.prev} disabled={index == 1}>上一步</button>
+                        <button  onClick={this.next} disabled={index == steps.length}>下一步</button></div>
+                </div>
+            </div>
         )
     }
 }

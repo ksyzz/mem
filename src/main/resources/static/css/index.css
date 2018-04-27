@@ -27,14 +27,14 @@
 
 .createProject{
     border-right: 1px solid grey;
-    min-height: 600px;
+    min-height: 300px;
     float: left;
     width: 50%;
 }
 
 .draw{
     padding-top: 4px;
-    min-height: 600px;
+    min-height: 300px;
     float: right;
     width: 50%;
 }
@@ -48,8 +48,8 @@
 }
 
 /*.ctable td{*/
-    /*border-bottom: #ddd 1px solid;*/
-    /*line-height: 2.45;*/
+/*border-bottom: #ddd 1px solid;*/
+/*line-height: 2.45;*/
 /*}*/
 
 
@@ -92,4 +92,15 @@
     border: none;
     margin: 3px;
 
+}
+
+.bl{
+    float: left;
+    padding-left: 45%;
+}
+
+.bl button{
+    width: 60px;
+    margin: 4px;
+    border-radius: 3px;
 }
