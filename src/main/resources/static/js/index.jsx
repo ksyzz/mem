@@ -4,6 +4,7 @@ const {
     Route,
     Link
 } = ReactRouterDOM;
+const Draw = Draw
 class Body extends React.Component {
     constructor(props) {
         super(props);
@@ -434,7 +435,6 @@ class Create extends React.Component {
         )
     }
 }
-
 class Draw extends React.Component {
     constructor(props) {
         super(props);
@@ -497,16 +497,20 @@ class Draw extends React.Component {
         return (
             <div className="draw">
                 <div className="tags">
-                        {tags}
-                        <button onClick={this.saveDraw}>保存</button>
+                    {tags}
+                    <button onClick={this.saveDraw}>保存</button>
                 </div>
                 <div className="contents" ref="content">
-                  {this.state.draw.content}
+                    {this.state.draw.content}
+                    <canvas id='board' width='100%' height='100%'></canvas>
                 </div>
+
             </div>
         )
     }
 }
+
+
 ReactDOM.render(<HashRouter><Body/></HashRouter>,  document.getElementById("container"));
 
 
