@@ -4,7 +4,7 @@ const {
     Route,
     Link
 } = ReactRouterDOM;
-const Draw = Draw
+const Draw = Draw;
 class Body extends React.Component {
     constructor(props) {
         super(props);
@@ -180,51 +180,51 @@ class Navigation extends React.Component {
 class Center extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            projects : []
-        }
         this.getData = this.getData.bind(this);
     }
 
-    getData(){
-        let url = '';
-        let that = this;
-        fetch(url, {
-            method:'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    if (result.state == 200) {
-
-                        that.setState({
-                            projects:result,
-                        });
-                    }
-                },
-
-            )
-            .catch(function () {
-                that.setState({
-                    error:true
-                })
-            })
-    }
+    // getData(){
+    //     let url = '/projects';
+    //     let that = this;
+    //     fetch(url, {
+    //         method:'GET',
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //         .then(res => res.json())
+    //         .then(
+    //             (result) => {
+    //                 if (result.state == 200) {
+    //
+    //                     that.setState({
+    //                         projects:result,
+    //                     });
+    //                 }
+    //             },
+    //
+    //         )
+    //         .catch(function () {
+    //             that.setState({
+    //                 error:true
+    //             })
+    //         })
+    // }
 
     render(){
         let projects = [];
-        for (let i = 0 ; i < 5; i++) {
-            projects.push({
-                id:""+i+"",
-                name:"项目"+i,
-                creator: "教师",
-                created: '2018/04/23'
-            })
-        }
+        $.ajax({
+            url:'/projects',
+            type:'get',
+            contentType:'application/json',
+            dataType:'json',
+            async:false,
+            success:function (data) {
+                projects = data;
+            }
+        })
+
         let dom = [];
         dom.push(
             <tbody>
@@ -263,39 +263,52 @@ class Center extends React.Component {
 
 class ProjectInfo extends React.Component {
     render(){
-        let codes = [];
-        codes.push('int function(int n)');
-        codes.push('{');
-        codes.push('    if (n == 1)');
-        codes.push('        return 1;');
-        codes.push('    else');
-        codes.push('        return 0;');
-        codes.push('}');
-        let steps = [];
-        steps.push({
-            index:1,
-            row:1,
-            content:'步骤1'
-        });
-        steps.push({
-            index:2,
-            row:3,
-            content:'步骤2'
-        });
-        steps.push({
-            index:3,
-            row:5,
-            content:'步骤3'
-        });
-        steps.push({
-            index:4,
-            row:6,
-            content:'步骤4'
-        });
+        let id = this.props.match.params.id;
+        let project;
+        $.ajax({
+            url:'/project/'+id,
+            type:'get',
+            contentType:'application/json',
+            dataType:'json',
+            async:false,
+            success:function (data) {
+                projects = data;
+            }
+        })
+        let codes = project.codes;
+        let steps = project.steps;
+        // codes.push('int function(int n)');
+        // codes.push('{');
+        // codes.push('    if (n == 1)');
+        // codes.push('        return 1;');
+        // codes.push('    else');
+        // codes.push('        return 0;');
+        // codes.push('}');
+        // let steps = [];
+        // steps.push({
+        //     index:1,
+        //     row:1,
+        //     content:'步骤1'
+        // });
+        // steps.push({
+        //     index:2,
+        //     row:3,
+        //     content:'步骤2'
+        // });
+        // steps.push({
+        //     index:3,
+        //     row:5,
+        //     content:'步骤3'
+        // });
+        // steps.push({
+        //     index:4,
+        //     row:6,
+        //     content:'步骤4'
+        // });
 
         return (
             <div className="cmain">
-                <div className="return"><Link to='/'>返回</Link></div>
+                <div className="return"><h3>{project.name}</h3><Link to='/'>返回</Link></div>
                 <Show codes={codes} steps={steps}/>
             </div>
         )
@@ -354,7 +367,10 @@ class Show extends React.Component {
                 </div>
                 <div className="draw">
                     <div className="contents" >
-                        {this.props.steps[index-1].content}
+                        <div className="editor-box clearfix" >
+                            <div className="action-show" ref="content" dangerouslySetInnerHTML={{__html:this.props.steps[index-1].content}}>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div >
@@ -369,15 +385,18 @@ class Show extends React.Component {
 class Create extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             rows: 15,
             steps:{},
             currentRow: 1,
-            index:1
+            index:1,
+            last: null
         }
         this.addOneRow = this.addOneRow.bind(this);
         this.focusRow = this.focusRow.bind(this);
         this.addDraw = this.addDraw.bind(this);
+        this.saveProject = this.saveProject.bind(this);
         // this.addOneIndex = this.addOneIndex.bind(this);
     }
 
@@ -387,26 +406,57 @@ class Create extends React.Component {
         })
     }
 
-    // addOneIndex(){
-    //     this.setState({
-    //         index : this.state.index + 1
-    //     })
-    // }
-
     focusRow(e){
         this.setState({
             currentRow : e
         })
     }
 
-    addDraw(e){
+    addDraw(e, last){
         this.setState({
             steps : e,
-            index : this.state.index + 1
+            index : this.state.index + 1,
+            last:last
         })
     }
 
+    saveProject(){
+        let steps = this.state.steps;
+        let rows = this.refs;
+        let codes = [];
+        for (var row in rows){
+            codes.push({
+                row:row,
+                code: rows[row].value
+            });
+        }
+        let project = prompt("请输入项目名称");
+        let info = {
+            name : project,
+            codes : codes,
+            steps : steps
+        }
+        let that = this;
+        $.ajax({
+            url:'/project',
+            type:'post',
+            contentType:'application/json',
+            dataType:'json',
+            data:info,
+            success:function () {
+                that.props.history.push('/');
+            }
+        })
+
+    }
+
     render(){
+        let style = {
+            backgroundColor:'#f9ffa9'
+        }
+        let normal = {
+            backgroundColor:'#FFF'
+        }
         let codes = [];
         let rows = this.state.rows;
         for (let i = 1; i <= rows; i++) {
@@ -414,14 +464,14 @@ class Create extends React.Component {
                 <tr>
                     <td className="index">{i}</td>
                     <td className="code">
-                        <input type='text' onclick={()=>this.focusRow(i)} className='line'/>
+                        <input type='text' ref={`${i}`} onClick={()=>this.focusRow(i)} style={i==this.state.currentRow ? style : normal} className='line'/>
                     </td>
                 </tr>
             )
         }
         return (
             <div className="cmain">
-                <div className="return"><Link to='/'>返回</Link></div>
+                <div className="return"><Link className='ra' to='/'>返回</Link><a role='button' className='ra1' onClick={this.saveProject}>保存项目</a></div>
                 <div className="createProject">
                     <table className="ctable" contenteditable="true">
                         <tbody>
@@ -435,81 +485,6 @@ class Create extends React.Component {
         )
     }
 }
-class Draw extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            draw:{
-                step:props.data.index,
-                content:'添加流程图'
-            }
-        }
-        this.saveDraw = this.saveDraw.bind(this);
-        this.setDraw = this.setDraw.bind(this);
-    }
-
-    setDraw(e){
-        this.setState({
-            draw:e
-        })
-    }
-
-    saveDraw(){
-        let content = this.refs.content.innerHTML;
-        let row = this.props.data.currentRow;
-        let draws = this.props.data.steps[row];
-        if (draws == null) {
-            draws = [];
-        }
-        draws.push({
-            step:this.props.data.index,
-            content: content
-        })
-        this.props.data.steps[row] = draws;
-        this.props.addDraw(this.props.data.steps)
-    }
-
-    render(){
-        let row = this.props.data.currentRow;
-        let draws = this.props.data.steps[row];
-        if (draws == null) {
-            draws = [];
-        }
-        draws.push({
-            step:this.props.data.index,
-            content: '添加流程图'
-        })
-        let tags = [];
-        let style = {
-            backgroundColor:"#61b961",
-            color:"#FFF"
-        };
-        for (let i = 0; i < draws.length; i++) {
-            let step = draws[i].step;
-            if (step == this.props.data.index){
-                tags.push(<button disabled={true} onClick={()=>this.setDraw(draws[i])} style={style}>步骤{step}</button>)
-            } else {
-                tags.push(<button onClick={()=>this.setDraw(draws[i])}>步骤{step}</button>)
-            }
-
-        }
-
-        return (
-            <div className="draw">
-                <div className="tags">
-                    {tags}
-                    <button onClick={this.saveDraw}>保存</button>
-                </div>
-                <div className="contents" ref="content">
-                    {this.state.draw.content}
-                    <canvas id='board' width='100%' height='100%'></canvas>
-                </div>
-
-            </div>
-        )
-    }
-}
-
 
 ReactDOM.render(<HashRouter><Body/></HashRouter>,  document.getElementById("container"));
 
