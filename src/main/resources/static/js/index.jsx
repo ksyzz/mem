@@ -180,7 +180,7 @@ class Navigation extends React.Component {
 class Center extends React.Component {
     constructor(props) {
         super(props);
-        this.getData = this.getData.bind(this);
+        // this.getData = this.getData.bind(this);
     }
 
     // getData(){
