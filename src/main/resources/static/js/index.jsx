@@ -157,6 +157,7 @@ class Main extends React.Component {
                     <Route exact path="/" component={Center}/>
                     <Route exact path="/project/view/:id" component={ProjectInfo}/>
                     <Route exact path="/project/create" component={Create}/>
+                    <Route exact path='/project/students' component={Student}/>
                 </Switch>
             </div>
         )
@@ -180,7 +181,24 @@ class Navigation extends React.Component {
 class Center extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            refresh:false
+        }
         // this.getData = this.getData.bind(this);
+        this.delete = this.delete.bind(this);
+    }
+
+    delete(e){
+        $.ajax({
+            url:'/project/'+e,
+            type:'delete',
+            contentType:'application/json',
+            success:function(){
+                this.setState({
+                    refresh: !this.state.refresh
+                })
+            }
+        })
     }
 
     // getData(){
@@ -234,6 +252,7 @@ class Center extends React.Component {
                         <td><Link to={`/project/view/${item.id}`}>{item.name}</Link></td>
                         <td>{item.creator}</td>
                         <td>{item.created}</td>
+                        <td>{type == 'TEACHER' && <button onClick={()=>this.delete(item.id)} className='ra1'>删除</button>}</td>
                     </tr>
                 )}
             </tbody>
@@ -241,7 +260,7 @@ class Center extends React.Component {
         let type = sessionStorage.getItem("type");
         return (
             <div className="plist">
-                {type == 'TEACHER' && <div className="return"><Link to='/project/create'>创建项目</Link></div>}
+                {type == 'TEACHER' && <div className="return"><Link className='ra' to='/project/create'>创建项目</Link><Link className='ra1' to='/project/students'>分配学员</Link></div>}
                     <table className="table table-striped" contenteditable="true">
                         <thead>
                         <tr>
@@ -249,6 +268,7 @@ class Center extends React.Component {
                             <th>名称</th>
                             <th>创建人</th>
                             <th>创建时间</th>
+                            <th></th>
                         </tr>
 
                         </thead>
@@ -484,6 +504,10 @@ class Create extends React.Component {
             </div>
         )
     }
+}
+
+class Student extends React.Component {
+
 }
 
 ReactDOM.render(<HashRouter><Body/></HashRouter>,  document.getElementById("container"));
