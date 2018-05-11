@@ -1,15 +1,18 @@
 package com.hust.mem.controller;
 
+import com.hust.mem.model.entity.Project;
+import com.hust.mem.model.json.ProjectInfo;
+import com.hust.mem.model.json.ProjectListInfo;
 import com.hust.mem.model.json.UserInfo;
+import com.hust.mem.service.ProjectService;
 import com.hust.mem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author fengqian
@@ -19,6 +22,9 @@ import java.security.spec.InvalidKeySpecException;
 public class UserController {
     @Autowired
     UserService userService;
+
+    @Autowired
+    ProjectService projectService;
 
     /**
      * 创建一个学员帐号
@@ -45,4 +51,27 @@ public class UserController {
     ) throws InvalidKeySpecException, NoSuchAlgorithmException {
         userService.createTeacher(userInfo);
     }
+
+    @RequestMapping(value = "/project",method = RequestMethod.POST)
+    public void createProject(@RequestBody ProjectInfo projectInfo
+            )throws InvalidKeySpecException, NoSuchAlgorithmException{
+        projectService.createProject(projectInfo);
+    }
+
+    @GetMapping(value = "/project/{id}")
+    @ResponseBody
+    public ProjectInfo getProject(@PathVariable("id")Integer id){
+        return projectService.getProjectInfo(id);
+    }
+
+    @GetMapping(value = "/projects")
+    @ResponseBody
+    public List<ProjectListInfo> projects(){
+        List<ProjectListInfo> list = new ArrayList<>();
+        for(Project project : projectService.getAllProjects()){
+            list.add(projectService.getProjectListInfo(project.getId()));
+        }
+        return list;
+    }
+
 }
